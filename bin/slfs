@@ -1,0 +1,65 @@
+#!/bin/bash
+SLFS="$( cd "$( dirname "$0" )" && cd .. && pwd )"
+
+function startfs() {
+	if [ -f /tmp/slfs-$1 ]
+	then
+		echo "Profile [$1] already started"
+		exit 1
+	fi
+	
+	if [ ! -f $SLFS/profiles/$1 ]
+	then
+		echo "Can't file profile for '$1'"
+		exit 1
+	fi
+	
+	source $SLFS/profiles/$1
+	
+	if [ ! -d $local_dir ]
+	then
+		mkdir $local_dir
+	fi
+	
+	sshfs $host:$host_dir $local_dir -oauto_cache,reconnect,defer_permissions,negative_vncache,volname=$1
+	touch /tmp/slfs-$1
+	echo "Starting [$1]"	
+}
+
+function stopfs() {
+	if [ ! -f $SLFS/profiles/$1 ]
+	then
+		echo "Can't file profile for '$1'"
+		exit 1
+	fi
+
+	if [ ! -f /tmp/slfs-$1 ]
+	then
+		echo "Profile '$1' not currently mounted"
+		exit 1
+	fi
+	
+	source $SLFS/profiles/$1
+	
+	umount $local_dir
+	rm /tmp/slfs-$1
+	echo "Stopping [$1]"
+}
+
+# command switch
+case "$2" in
+  start)
+	startfs $1
+	;;
+  stop)
+	stopfs $1
+	;;
+  restart)
+	stopfs $1
+	startfs $1
+	;;
+  *)
+	echo $"Usage: slfs [profile] {start|stop|restart}"
+	exit 1
+esac
+exit 0
