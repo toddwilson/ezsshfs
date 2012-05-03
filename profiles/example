@@ -1,0 +1,8 @@
+# leverage your ssh-config to do any special magic you need there
+host="myhostname"
+
+# What directory on the remote machine to mount to
+host_dir="/"
+
+# Local directory where the mount resides
+local_dir="/Volumes/RemoteHost"

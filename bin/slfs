@@ -1,4 +1,5 @@
 #!/bin/bash
+set +e
 SLFS="$( cd "$( dirname "$0" )" && cd .. && pwd )"
 
 function startfs() {
@@ -21,7 +22,14 @@ function startfs() {
 		mkdir $local_dir
 	fi
 	
-	sshfs $host:$host_dir $local_dir -oauto_cache,reconnect,defer_permissions,negative_vncache,volname=$1
+	mnt=$( sshfs $host:$host_dir $local_dir -o auto_cache,local,reconnect,defer_permissions,negative_vncache,volname=$1 2>&1 )
+	
+	if [ "$mnt" != "" ]
+	then
+		echo "Error: $mnt"
+		exit 1
+	fi
+	
 	touch /tmp/slfs-$1
 	echo "Starting [$1]"	
 }
@@ -41,7 +49,19 @@ function stopfs() {
 	
 	source $SLFS/profiles/$1
 	
-	umount $local_dir
+	umnt=$( umount $local_dir 2>&1 )
+	
+	if [ "$umnt" != "" ]
+	then
+		echo "Error: $umnt"
+		if [[ "$umnt" == *"Resource busy"* ]]
+		then
+			echo "lsof for $local_dir:"
+			lsof $local_dir | egrep -v '^lsof|egrep'
+		fi
+		exit 1
+	fi
+	
 	rm /tmp/slfs-$1
 	echo "Stopping [$1]"
 }
