@@ -22,7 +22,7 @@ function startfs() {
 		mkdir $local_dir
 	fi
 	
-	mnt=$( sshfs $host:$host_dir $local_dir -o auto_cache,local,reconnect,defer_permissions,negative_vncache,volname=$1 2>&1 )
+	mnt=$( sshfs $host:$host_dir $local_dir -o Ciphers=arcfour,auto_cache,local,reconnect,defer_permissions,negative_vncache,volname=$1 2>&1 )
 	
 	if [ "$mnt" != "" ]
 	then
