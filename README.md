@@ -3,6 +3,8 @@ ezsshfs
 
 Easy handling of multiple sshfs mounts
 
+Depends on sshfs. Brew install it!
+
 ## Installation
 
 * Create directory `~/.ezsshfs` (this is where your mount profiles will go)
