@@ -1,56 +1,57 @@
 #!/bin/bash
 set +e
-SLFS="$( cd "$( dirname "$0" )" && cd .. && pwd )"
+
+profiles="$HOME/.ezsshfs"
 
 function startfs() {
-	if [ -f /tmp/slfs-$1 ]
+	if [ -f /tmp/ezsshfs-$1 ]
 	then
 		echo "Profile [$1] already started"
 		exit 1
 	fi
-	
-	if [ ! -f $SLFS/profiles/$1 ]
+
+	if [ ! -f $profiles/$1 ]
 	then
 		echo "Can't file profile for '$1'"
 		exit 1
 	fi
-	
-	source $SLFS/profiles/$1
-	
+
+	source $profiles/$1
+
 	if [ ! -d $local_dir ]
 	then
 		mkdir $local_dir
 	fi
-	
+
 	mnt=$( sshfs $host:$host_dir $local_dir -o Ciphers=arcfour,auto_cache,local,reconnect,defer_permissions,negative_vncache,volname=$1 2>&1 )
-	
+
 	if [ "$mnt" != "" ]
 	then
 		echo "Error: $mnt"
 		exit 1
 	fi
-	
-	touch /tmp/slfs-$1
-	echo "Starting [$1]"	
+
+	touch /tmp/ezsshfs-$1
+	echo "Starting [$1]"
 }
 
 function stopfs() {
-	if [ ! -f $SLFS/profiles/$1 ]
+	if [ ! -f $profiles/$1 ]
 	then
 		echo "Can't file profile for '$1'"
 		exit 1
 	fi
 
-	if [ ! -f /tmp/slfs-$1 ]
+	if [ ! -f /tmp/ezsshfs-$1 ]
 	then
 		echo "Profile '$1' not currently mounted"
 		exit 1
 	fi
-	
-	source $SLFS/profiles/$1
-	
+
+	source $profiles/$1
+
 	umnt=$( umount $local_dir 2>&1 )
-	
+
 	if [ "$umnt" != "" ]
 	then
 		echo "Error: $umnt"
@@ -61,8 +62,8 @@ function stopfs() {
 		fi
 		exit 1
 	fi
-	
-	rm /tmp/slfs-$1
+
+	rm /tmp/ezsshfs-$1
 	echo "Stopping [$1]"
 }
 
@@ -79,7 +80,7 @@ case "$2" in
 	startfs $1
 	;;
   *)
-	echo $"Usage: slfs [profile] {start|stop|restart}"
+	echo $"Usage: ezsshfs {start|stop|restart} [profile]"
 	exit 1
 esac
 exit 0
