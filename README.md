@@ -3,28 +3,30 @@ ezsshfs
 
 Easy handling of multiple sshfs mounts
 
-Installation
-~~~~~~~~~~~~
+## Installation
 
-1. Create directory `~/.ezsshfs` (this is where your mount profiles will go)
+* Create directory `~/.ezsshfs` (this is where your mount profiles will go)
 
-2. Add a new profile to the directory. Example:
+* Add a new profile to the directory. Example:
 
-    # ~/.ezsshfs/example-profile
+```bash
+# ~/.ezsshfs/example-profile
 
-    # leverage your ssh-config to do any special magic you need there
-    host="myhostname"
+# leverage your ssh-config to do any special magic you need there
+host="myhostname"
 
-    # What directory on the remote machine to mount to
-    host_dir="/"
+# What directory on the remote machine to mount to
+host_dir="/"
 
-    # Local directory where the mount resides
-    local_dir="/Volumes/RemoteHost"
+# Local directory where the mount reside
+local_dir="/Volumes/RemoteHost"
+```
 
-3. Put `ezsshfs` in your $PATH
+* Add `ezsshfs` to your $PATH
 
-Usage
-~~~~~
+
+
+## Usage
 
 Mount a SSHFS profile:
 
