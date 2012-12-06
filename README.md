@@ -32,8 +32,8 @@ local_dir="/Volumes/RemoteHost"
 
 Mount a SSHFS profile:
 
-    $ ezsshfs start example-profile
+    $ ezsshfs example-profile start
 
 Unmount:
 
-    $ ezsshfs stop example-profile
+    $ ezsshfs example-profile stop
